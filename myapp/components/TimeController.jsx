@@ -6,6 +6,7 @@ import { TimeContext } from "@/context";
 const TimeController = () => {
   const { time, setTime } = useContext(TimeContext);
   const [status, setStatus] = useState("idle");
+  const [totalTime, setTotalTime] = useState(0);
 
   const intervalRef = useRef(null);
 
@@ -15,10 +16,19 @@ const TimeController = () => {
     };
   }, []);
 
+  const calculateTotalSeconds = ({ minutes, seconds }) =>
+    minutes * 60 + seconds;
+  const calculateProgress = () => {
+    if (totalTime === 0) return 0;
+    const remainingTime = calculateTotalSeconds(time);
+    return ((totalTime - remainingTime) / totalTime) * 100;
+  };
+
   const onStartCounter = () => {
     if (time.minutes == 0 && time.seconds === 0) return;
     if (intervalRef.current) return;
 
+    setTotalTime(calculateTotalSeconds(time));
     setStatus("running");
 
     intervalRef.current = setInterval(() => {
@@ -60,7 +70,7 @@ const TimeController = () => {
   };
   const onIncrementPress = () => {
     setTime((prev) => {
-      let newSeconds = prev.seconds + 30
+      let newSeconds = prev.seconds + 30;
       let newMinutes = prev.minutes;
 
       if (newSeconds >= 60) {
@@ -70,8 +80,6 @@ const TimeController = () => {
 
       return { ...prev, minutes: newMinutes, seconds: newSeconds };
     });
-
-
   };
   const onDecrementPress = () => {
     setTime((prev) => {
@@ -128,7 +136,14 @@ const TimeController = () => {
         </View>
       </View>
 
-      <View style={styles.progressBar}></View>
+      <View style={styles.progressBar}>
+        <View
+          style={[
+            styles.progressBarElement,
+            { width: `${calculateProgress()}%` },
+          ]}
+        ></View>
+      </View>
 
       <View style={styles.timeControlls}>
         {status === "idle" && (
@@ -228,6 +243,12 @@ const styles = StyleSheet.create({
     width: "90%",
     backgroundColor: "#fff",
     marginTop: 20,
+    borderRadius: 100,
+    overflow: "hidden",
+  },
+  progressBarElement: {
+    height: "100%",
+    backgroundColor: "blue",
     borderRadius: 100,
   },
   increment: {

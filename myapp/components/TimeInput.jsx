@@ -4,7 +4,6 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Alert,
 } from "react-native";
 
 import Button from "./Button";
@@ -26,8 +25,6 @@ const TimeInput = () => {
       });
     }
   };
-
-  if (time.minutes !== 0 && time.seconds !== 0) return null;
 
   return (
     <View style={styles.container}>

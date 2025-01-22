@@ -1,52 +1,101 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Button from "./Button";
 import { TimeContext } from "@/context";
 
 const TimeController = () => {
   const { time, setTime } = useContext(TimeContext);
-  const [isCounting, setIsCounting] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isNeedCountDown, setIsNeedCountDown] = useState(false);
+  const [status, setStatus] = useState("idle");
 
+  const intervalRef = useRef(null);
 
-
-
+  useEffect(() => {
+    return () => {
+      clearInterval(intervalRef.current);
+    };
+  }, []);
 
   const onStartCounter = () => {
-    setIsCounting(true);
-    setIsPaused(false);
+    if (time.minutes == 0 && time.seconds === 0) return;
+    if (intervalRef.current) return;
 
-    setInterval(() => {
-      let prevTime = time.seconds;
-      setTime({ ...time, seconds: prevTime - 1 });
+    setStatus("running");
+
+    intervalRef.current = setInterval(() => {
+      setTime((prev) => {
+        const { minutes, seconds } = prev;
+        if (minutes === 0 && seconds === 0) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+          setStatus("idle");
+          return { minutes: 0, seconds: 0 };
+        }
+        const newSeconds = seconds > 0 ? seconds - 1 : 59;
+        const newMinutes = seconds === 0 ? minutes - 1 : minutes;
+        return { minutes: newMinutes, seconds: newSeconds };
+      });
     }, 1000);
   };
 
-  const onResetPress = () => {
+  const onReset = () => {
+    clearInterval(intervalRef.current);
+    intervalRef.current = null;
     setTime({ ...time, minutes: 0, seconds: 0 });
-    setIsCounting(false);
+    setStatus("idle");
   };
 
   const onPause = () => {
-    setIsCounting(false);
-    setIsPaused(true);
+    clearInterval(intervalRef.current);
+    intervalRef.current = null;
+    setStatus("paused");
   };
   const onResume = () => {
-    setIsCounting(true);
-    setIsPaused(false);
+    if (time.minutes === 0 && time.seconds === 0) return;
+    onStartCounter();
   };
   const onStop = () => {
-    setIsCounting(false);
+    clearInterval(intervalRef.current);
+    intervalRef.current = null;
+    setStatus("idle");
   };
   const onIncrementPress = () => {
-    const updatedSeconds = time.seconds >= 30 ? 0 : Number(time.seconds) + 30;
-    setTime({ ...time, seconds: updatedSeconds });
+    setTime((prev) => {
+      let newSeconds = prev.seconds + 30;
+      let newMinutes = prev.minutes;
+
+      if (newSeconds >= 60) {
+        newMinutes += Math.floor(newSeconds / 60);
+        newSeconds %= 60;
+      }
+
+      return { ...prev, minutes: newMinutes, seconds: newSeconds };
+    });
   };
   const onDecrementPress = () => {
-    const updatedSeconds = time.seconds >= 30 ? time.seconds - 30 : 0;
-    setTime({ ...time, seconds: updatedSeconds });
+    setTime((prev) => {
+      let newSeconds = prev.seconds - 30;
+      let newMinutes = prev.minutes;
+
+      if (newSeconds < 0) {
+        if (newMinutes > 0) {
+          newMinutes -= 1;
+          newSeconds += 60;
+        } else {
+          newMinutes = 0;
+          newSeconds = 0;
+        }
+      }
+
+      return { ...prev, minutes: newMinutes, seconds: newSeconds };
+    });
   };
+
+  const formatTime = (time) =>
+    `${String(time.minutes).padStart(2, "0")}:${String(time.seconds).padStart(
+      2,
+      "0"
+    )}`;
+
   return (
     <View style={styles.container}>
       <View style={styles.increment}>
@@ -62,10 +111,7 @@ const TimeController = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.timeDisplayer}>
-          <Text style={styles.timeText}>
-            {time.minutes}:{time.seconds}
-          </Text>
-          <View></View>
+          <Text style={styles.timeText}>{formatTime(time)}</Text>
         </View>
         <View>
           <TouchableOpacity onPress={onIncrementPress}>
@@ -79,9 +125,11 @@ const TimeController = () => {
           </TouchableOpacity>
         </View>
       </View>
+
       <View style={styles.progressBar}></View>
+
       <View style={styles.timeControlls}>
-        {!isCounting && !isPaused && (
+        {status === "idle" && (
           <TouchableOpacity onPress={onStartCounter}>
             <Button
               color="green"
@@ -92,7 +140,7 @@ const TimeController = () => {
             />
           </TouchableOpacity>
         )}
-        {isCounting && !isPaused && (
+        {status === "running" && (
           <TouchableOpacity onPress={onPause}>
             <Button
               color="green"
@@ -103,7 +151,7 @@ const TimeController = () => {
             />
           </TouchableOpacity>
         )}
-        {isPaused && (
+        {status === "paused" && (
           <TouchableOpacity onPress={onResume}>
             <Button
               color="green"
@@ -114,19 +162,20 @@ const TimeController = () => {
             />
           </TouchableOpacity>
         )}
-        {isCounting && (
-          <TouchableOpacity onPress={onStop}>
-            <Button
-              color="red"
-              height={60}
-              textColor="white"
-              title="Stop"
-              width={90}
-            />
-          </TouchableOpacity>
-        )}
+        {status === "running" ||
+          (status === "paused" && (
+            <TouchableOpacity onPress={onStop}>
+              <Button
+                color="red"
+                height={60}
+                textColor="white"
+                title="Stop"
+                width={90}
+              />
+            </TouchableOpacity>
+          ))}
 
-        <TouchableOpacity onPress={onResetPress}>
+        <TouchableOpacity onPress={onReset}>
           <Button
             color="black"
             height={60}

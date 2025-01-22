@@ -37,7 +37,8 @@ const TimeController = () => {
         if (minutes === 0 && seconds === 0) {
           clearInterval(intervalRef.current);
           intervalRef.current = null;
-          setStatus("idle");
+          alert("Time Out");
+          setTimeout(() => setStatus("idle"), 0);
           return { minutes: 0, seconds: 0 };
         }
         const newSeconds = seconds > 0 ? seconds - 1 : 59;
@@ -149,7 +150,7 @@ const TimeController = () => {
         {status === "idle" && (
           <TouchableOpacity onPress={onStartCounter}>
             <Button
-              color="green"
+              color="#37c440"
               height={60}
               textColor="white"
               title="Start"
@@ -160,7 +161,7 @@ const TimeController = () => {
         {status === "running" && (
           <TouchableOpacity onPress={onPause}>
             <Button
-              color="green"
+              color="#37c440"
               height={60}
               textColor="white"
               title="Pause"
@@ -171,7 +172,7 @@ const TimeController = () => {
         {status === "paused" && (
           <TouchableOpacity onPress={onResume}>
             <Button
-              color="green"
+              color="#37c440"
               height={60}
               textColor="white"
               title="Resume"
@@ -182,7 +183,7 @@ const TimeController = () => {
         {(status === "paused" || status === "running") && (
           <TouchableOpacity onPress={onStop}>
             <Button
-              color="red"
+              color="#797a79"
               height={60}
               textColor="white"
               title="Stop"
@@ -193,7 +194,7 @@ const TimeController = () => {
 
         <TouchableOpacity onPress={onReset}>
           <Button
-            color="black"
+            color="red"
             height={60}
             textColor="white"
             title="Reset"
@@ -210,7 +211,7 @@ export default TimeController;
 const styles = StyleSheet.create({
   container: {
     height: 400,
-    backgroundColor: "#1c2e27",
+    backgroundColor: "#33635c",
     width: "96%",
     marginTop: 10,
     borderRadius: 24,
@@ -248,7 +249,7 @@ const styles = StyleSheet.create({
   },
   progressBarElement: {
     height: "100%",
-    backgroundColor: "blue",
+    backgroundColor: "#454df5",
     borderRadius: 100,
   },
   increment: {

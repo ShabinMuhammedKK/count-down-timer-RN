@@ -77,7 +77,7 @@ export default TimeInput;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#1c2e27",
+    backgroundColor: "#33635c",
     width: "96%",
     height: 150,
     borderRadius: 24,

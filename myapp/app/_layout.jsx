@@ -10,13 +10,11 @@ const RootLayout = () => {
   const [theme, setTheme] = useState("Light"); // Dark | Light
 
   return (
-    <>
-      <TimeContext.Provider value={{ time, setTime, Colors, theme, setTheme }}>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-        </Stack>
-      </TimeContext.Provider>
-    </>
+    <TimeContext.Provider value={{ time, setTime, Colors, theme, setTheme }}>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+      </Stack>
+    </TimeContext.Provider>
   );
 };
 export default RootLayout;

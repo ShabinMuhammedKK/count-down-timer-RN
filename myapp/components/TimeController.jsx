@@ -60,7 +60,7 @@ const TimeController = () => {
   };
   const onIncrementPress = () => {
     setTime((prev) => {
-      let newSeconds = prev.seconds + 30;
+      let newSeconds = prev.seconds + 30
       let newMinutes = prev.minutes;
 
       if (newSeconds >= 60) {
@@ -70,6 +70,8 @@ const TimeController = () => {
 
       return { ...prev, minutes: newMinutes, seconds: newSeconds };
     });
+
+
   };
   const onDecrementPress = () => {
     setTime((prev) => {

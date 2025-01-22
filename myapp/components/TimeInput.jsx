@@ -15,8 +15,11 @@ const TimeInput = () => {
   const { time, setTime } = useContext(TimeContext);
 
   const onSetBtn = () => {
-    if (updatedTime.seconds > 59 || updatedTime.seconds < 0) {
-      alert("Seconds not valid");
+    if (
+      updatedTime.minutes == 0 &&
+      (updatedTime.seconds > 59 || updatedTime.seconds <= 0)
+    ) {
+      alert("Not valid time");
     } else {
       setTime({
         ...time,
@@ -26,46 +29,58 @@ const TimeInput = () => {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.headingText}>Set timer</Text>
-      <View style={styles.timeInput}>
-        <TextInput
-          style={styles.inputField}
-          placeholder="Minutes"
-          onChangeText={(newMinutes) =>
-            setNewTime({ ...updatedTime, minutes: newMinutes })
-          }
-        />
-        <TextInput
-          style={styles.inputField}
-          placeholder="Seconds"
-          onChangeText={(newSeconds) =>
-            setNewTime({ ...updatedTime, seconds: newSeconds })
-          }
-        />
-        <TouchableOpacity onPress={onSetBtn}>
-          <Button
-            color="#000"
-            height={36}
-            title="Set"
-            width={70}
-            textColor="#fff"
-          />
-        </TouchableOpacity>
+  if (time.minutes === 0 && time.seconds === 0) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.headingText}>Set time</Text>
+        <View style={styles.timeInput}>
+          <View style={styles.inputLabel}>
+            <TextInput
+              style={styles.inputField}
+              placeholder="0"
+              onChangeText={(newMinutes) =>
+                setNewTime({ ...updatedTime, minutes: newMinutes })
+              }
+            />
+            <Text style={{ color: "white", fontSize: 12 }}>Minutes</Text>
+          </View>
+          <View style={styles.inputLabel}>
+            <TextInput
+              style={styles.inputField}
+              placeholder="0"
+              onChangeText={(newSeconds) =>
+                setNewTime({ ...updatedTime, seconds: newSeconds })
+              }
+            />
+
+            <Text style={{ color: "white", fontSize: 12 }}>Seconds</Text>
+          </View>
+          <TouchableOpacity onPress={onSetBtn}>
+            <Button
+              style={{ borderRadius: 6 }}
+              color="#295ff2"
+              height={40}
+              title="Set"
+              width={70}
+              textColor="#fff"
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-  );
+    );
+  } else {
+    return null;
+  }
 };
 
 export default TimeInput;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#e2e2e2",
+    backgroundColor: "#1c2e27",
     width: "96%",
     height: 150,
-    borderRadius: 16,
+    borderRadius: 24,
     marginTop: 20,
     padding: 20,
   },
@@ -73,15 +88,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     width: 80,
+    textAlign: "center",
   },
   timeInput: {
     flexDirection: "row",
     gap: 6,
-    alignItems: "center",
+    alignItems: "flex-start",
     marginTop: 20,
   },
   headingText: {
+    color: "white",
     fontSize: 20,
     fontWeight: "500",
+  },
+  inputLabel: {
+    alignItems: "center",
   },
 });

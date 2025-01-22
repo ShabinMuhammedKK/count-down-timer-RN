@@ -162,18 +162,17 @@ const TimeController = () => {
             />
           </TouchableOpacity>
         )}
-        {status === "running" ||
-          (status === "paused" && (
-            <TouchableOpacity onPress={onStop}>
-              <Button
-                color="red"
-                height={60}
-                textColor="white"
-                title="Stop"
-                width={90}
-              />
-            </TouchableOpacity>
-          ))}
+        {(status === "paused" || status === "running") && (
+          <TouchableOpacity onPress={onStop}>
+            <Button
+              color="red"
+              height={60}
+              textColor="white"
+              title="Stop"
+              width={90}
+            />
+          </TouchableOpacity>
+        )}
 
         <TouchableOpacity onPress={onReset}>
           <Button
@@ -194,10 +193,10 @@ export default TimeController;
 const styles = StyleSheet.create({
   container: {
     height: 400,
-    backgroundColor: "#e2e2e2",
+    backgroundColor: "#1c2e27",
     width: "96%",
     marginTop: 10,
-    borderRadius: 16,
+    borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -207,15 +206,16 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 16,
+    borderRadius: 100,
   },
   timeControlls: {
     height: 100,
     flexDirection: "row",
     width: "100%",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     alignItems: "center",
     marginTop: 16,
+    gap: 10,
   },
   timeText: {
     fontWeight: "900",
@@ -224,13 +224,13 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 5,
     width: "90%",
-    backgroundColor: "blue",
+    backgroundColor: "#fff",
     marginTop: 20,
     borderRadius: 100,
   },
   increment: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     gap: 10,
   },
 });
